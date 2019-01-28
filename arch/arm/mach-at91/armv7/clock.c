@@ -127,18 +127,26 @@ void at91_mck_init(u32 mckr)
 	u32 tmp;
 
 	tmp = readl(&pmc->mckr);
+#ifdef CONFIG_TARGET_SAMA5D3_EMTRION
+	tmp &= ~(AT91_PMC_MCKR_PRES_MASK |
+#else
 	tmp &= ~(AT91_PMC_MCKR_CSS_MASK  |
-		 AT91_PMC_MCKR_PRES_MASK |
+			AT91_PMC_MCKR_PRES_MASK |
+#endif
 		 AT91_PMC_MCKR_MDIV_MASK |
 		 AT91_PMC_MCKR_PLLADIV_2);
 #ifdef CPU_HAS_H32MXDIV
 	tmp &= ~AT91_PMC_MCKR_H32MXDIV;
 #endif
 
+#ifdef CONFIG_TARGET_SAMA5D3_EMTRION
+	tmp |= mckr & (AT91_PMC_MCKR_PRES_MASK |
+#else
 	tmp |= mckr & (AT91_PMC_MCKR_CSS_MASK  |
-		       AT91_PMC_MCKR_PRES_MASK |
-		       AT91_PMC_MCKR_MDIV_MASK |
-		       AT91_PMC_MCKR_PLLADIV_2);
+				AT91_PMC_MCKR_PRES_MASK |
+#endif
+				AT91_PMC_MCKR_MDIV_MASK |
+				AT91_PMC_MCKR_PLLADIV_2);
 #ifdef CPU_HAS_H32MXDIV
 	tmp |= mckr & AT91_PMC_MCKR_H32MXDIV;
 #endif
@@ -147,6 +155,25 @@ void at91_mck_init(u32 mckr)
 
 	while (!(readl(&pmc->sr) & AT91_PMC_MCKRDY))
 		;
+#ifdef CONFIG_TARGET_SAMA5D3_EMTRION
+	/* switch to main oscillator (see at91bootstrap for reference) */
+	if ((readl(&pmc->mckr) & AT91_PMC_MCKR_CSS_MASK) == AT91_PMC_MCKR_CSS_SLOW) {
+		tmp = readl(&pmc->mckr);
+		tmp &= ~AT91_PMC_MCKR_CSS_MASK;
+		tmp |= AT91_PMC_MCKR_CSS_MAIN;
+		writel(tmp, &pmc->mckr);
+		
+		while (!(readl(&pmc->mckr) & AT91_PMC_MCKRDY))
+			;
+		
+		tmp &= ~AT91_PMC_MCKR_PRES_MASK;
+		tmp |= AT91_PMC_PRES_1;
+		writel(tmp, &pmc->mckr);
+		
+		while (!(readl(&pmc->mckr) & AT91_PMC_MCKRDY))
+			;
+	}
+#endif
 }
 
 /*
