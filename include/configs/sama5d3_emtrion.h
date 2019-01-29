@@ -3,7 +3,7 @@
  * Configuration settings for the SAMA5D3 Emtrion board.
  *
  * Copyright (C) 2019
- *		      photonthunder@gmail.com <photonthunder@gmail.com>
+ *		      Dan Evans <photonthunder@gmail.com>
  */
 
 #ifndef __CONFIG_H
