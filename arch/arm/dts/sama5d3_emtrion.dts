@@ -240,6 +240,11 @@
 						atmel,pins =
 							<AT91_PIOE 9 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;	/* PE9, conflicts with A9 */
 					};
+
+                    pinctrl_ble_irq: ble_irq {
+                        atmel,pins =
+                        <AT91_PIOD 8 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_DOWN>;
+                    };
 				};
 			};
 		};
