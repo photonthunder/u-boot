@@ -47,7 +47,7 @@
 				slot@0 {
 					reg = <0>;
 					bus-width = <4>;
-					/* cd-gpios = <&pioE 0 GPIO_ACTIVE_LOW> */;
+					/* cd-gpios = <&pioE 0 GPIO_ACTIVE_LOW>; */
 				};
 			};
 
