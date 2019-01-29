@@ -91,8 +91,8 @@
 			};
 
 			pwm0: pwm@f002c000 {
-				pinctrl-names = "disabled";
-				pinctrl-0 = <&pinctrl_pwm0_pwmh0_0 &pinctrl_pwm0_pwmh1_0>;
+				pinctrl-names = "default";
+                pinctrl-0 = <&pinctrl_pwm0_pwml1_2 &pinctrl_pwm0_pwml2_1 &pinctrl_pwm0_pwmh2_1 &pinctrl_pwm0_pwmh3_1 &pinctrl_pwm0_pwml3_1>;
 				status = "okay";
 			};
 
@@ -355,4 +355,8 @@
             linux,default-state = "off";
         };
     };
+};
+
+&adc_op_clk {
+clock-frequency = <500000>;
 };
