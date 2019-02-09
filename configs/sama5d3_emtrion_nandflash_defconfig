@@ -21,7 +21,7 @@ CONFIG_BOOTDELAY=3
 CONFIG_USE_BOOTARGS=y
 CONFIG_BOOTARGS="console=ttyS0,115200 earlyprintk mtdparts=atmel_nand:256k(bootstrap)ro,768k(uboot)ro,512k(uboot_env)rw,512k(dtb)rw,6M(kernel)ro,408M(rootfs)ro,96(var)rw rootfstype=ubifs ubi.mtd=5 root=ubi0:rootfs"
 CONFIG_MTDIDS_DEFAULT="nand0=atmel_nand"
-CONFIG_MTDPARTS_DEFAULT="mtdparts=atmel_nand:256k(bootstrap)ro,768k(uboot)ro,512K(uboot_env)rw,512k(dtb)rw,6M(kernel)ro,408M(rootfs)ro,96M(var)rw"
+CONFIG_MTDPARTS_DEFAULT="mtdparts=atmel_nand:256k(bootstrap)ro,768k(uboot)ro,512K(uboot_env),512k(dtb),6M(kernel)ro,408M(rootfs)ro,96M(var)"
 # CONFIG_DISPLAY_BOARDINFO is not set
 CONFIG_SPL_NAND_SUPPORT=y
 CONFIG_HUSH_PARSER=y
