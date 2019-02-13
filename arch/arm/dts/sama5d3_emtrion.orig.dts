@@ -1,21 +1,25 @@
 /*
- * sama5d3_emtrion.dts - Device Tree file for the SAMA5D3 Emtrion board
+ * sama5d3_emtrion.dts - Device Tree file for the SAMA5D3 emtrion board
  *
- *  Copyright (C) 2019,
+ *  Copyright (C) 2019 Atmel,
  *		  2019 Daniel Evans <photonthunder@gmail.com>
  *
  * Licensed under GPLv2 or later.
  */
 /dts-v1/;
 #include "sama5d36.dtsi"
-#include <dt-bindings/pwm/pwm.h>
 
 / {
 	model = "SAMA5D3 Emtrion";
-	compatible = "emtrion,sama5d3_emtrion", "atmel,sama5d3", "atmel,sama5";
+	compatible = "emtrion,sama5d3-emtrion", "atmel,sama5d3", "atmel,sama5";
 
 	chosen {
-		stdout-path = "serial0:115200n8";
+		u-boot,dm-pre-reloc;
+		stdout-path = &dbgu;
+	};
+
+	aliases {
+		spi0 = &spi0;
 	};
 
 	memory {
@@ -35,7 +39,8 @@
 	ahb {
 		apb {
 			mmc0: mmc@f0000000 {
-				pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat0 &pinctrl_mmc0_dat1_3 /* &pinctrl_mmc0_dat4_7 &pinctrl_mmc0_cd */>;
+				u-boot,dm-pre-reloc;
+				pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat0 &pinctrl_mmc0_dat1_3 /*&pinctrl_mmc0_dat4_7 &pinctrl_mmc0_cd*/>;
 				/* vmmc-supply = <&vcc_mmc0_reg>;
 				vqmmc-supply = <&vcc_3v3_reg>; */
 				status = "okay";
@@ -47,8 +52,7 @@
 			};
 
 			mmc1: mmc@f8000000 {
-				/* vmmc-supply = <&vcc_3v3_reg>;
-				vqmmc-supply = <&vcc_3v3_reg>; */
+				u-boot,dm-pre-reloc;
 				status = "disabled";
 				slot@0 {
 					reg = <0>;
@@ -58,7 +62,7 @@
 			};
 
 			spi0: spi@f0004000 {
-				cs-gpios = <&pioD 13 0>;
+				cs-gpios = <&pioD 13 0>, <0>, <0>, <&pioD 16 0>;
 				status = "disabled";
 			};
 
@@ -66,30 +70,12 @@
 				status = "disabled";
 			};
 
-			tcb0: timer@f0010000 {
-				timer0: timer@0 {
-					compatible = "atmel,tcb-timer";
-					reg = <0>;
-				};
-
-				timer1: timer@1 {
-					compatible = "atmel,tcb-timer";
-					reg = <1>;
-				};
-			};
-
-            ssc0: ssc@f0008000 {
-                pinctrl-0 = <>;
-            };
-
 			i2c0: i2c@f0014000 {
-                clock-frequency = <100000>;
-				/* pinctrl-0 = <&pinctrl_i2c0_pu>; */
+				pinctrl-0 = <&pinctrl_i2c0_pu>;
 				status = "disabled";
 			};
 
 			i2c1: i2c@f0018000 {
-                clock-frequency = <100000>;
 				status = "disabled";
 			};
 
@@ -106,8 +92,8 @@
 
 			pwm0: pwm@f002c000 {
 				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_pwm0_pwml1_2 &pinctrl_pwm0_pwml2_1 &pinctrl_pwm0_pwmh2_1 &pinctrl_pwm0_pwmh3_1 &pinctrl_pwm0_pwml3_1>;
-				status = "disabled";
+                pinctrl-0 = <&pinctrl_pwm0_pwml1_2 &pinctrl_pwm0_pwml2_1 &pinctrl_pwm0_pwmh2_1 &pinctrl_pwm0_pwmh3_1 &pinctrl_pwm0_pwml3_1>;
+				status = "okay";
 			};
 
             sha@f8034000 {
@@ -126,34 +112,34 @@
             };
 
 			usart0: serial@f001c000 {
-                pinctrl-0 = <&pinctrl_usart0>;
                 atmel,use-dma-rx;
                 atmel,use-dma-tx;
 				status = "okay";
 			};
 
 			usart1: serial@f0020000 {
-                pinctrl-0 = <&pinctrl_usart1>;
                 atmel,use-dma-rx;
                 atmel,use-dma-tx;
+				pinctrl-0 = <&pinctrl_usart1>;
 				status = "okay";
 			};
 
             usart2: serial@f8020000 {
-                pinctrl-0 = <&pinctrl_usart2>;
                 atmel,use-dma-rx;
                 atmel,use-dma-tx;
+                pinctrl-0 = <&pinctrl_usart1>;
                 status = "okay";
             };
 
             usart3: serial@f8024000 {
-                pinctrl-0 = <&pinctrl_usart3>;
                 atmel,use-dma-rx;
                 atmel,use-dma-tx;
+                pinctrl-0 = <&pinctrl_usart1>;
                 status = "okay";
             };
 
 			uart0: serial@f0024000 {
+
 				status = "okay";
 			};
 
@@ -167,7 +153,7 @@
 				};
 			};
 
-            spi1: spi@f8008000 {
+			spi1: spi@f8008000 {
                 cs-gpios = <0>, <0>, <0>, <0>;
                 pinctrl-0 = <&pinctrl_spi1 &pinctrl_ble_irq>;
                 dmas = <0>, <0>;
@@ -177,12 +163,11 @@
                     spi-max-frequency = <10000000>;
                     reg = <0>;
                 };
-            };
+			};
 
 			adc0: adc@f8018000 {
-				atmel,adc-vref = <3300>;
-				atmel,adc-channels-used = <0xfe>;
 				pinctrl-0 = <
+					&pinctrl_adc0_adtrg
 					&pinctrl_adc0_ad0
 					&pinctrl_adc0_ad1
 					&pinctrl_adc0_ad2
@@ -191,13 +176,15 @@
 					&pinctrl_adc0_ad5
 					&pinctrl_adc0_ad6
 					&pinctrl_adc0_ad7
+					&pinctrl_adc0_ad8
+					&pinctrl_adc0_ad9
 					>;
 				status = "okay";
 			};
 
 			i2c2: i2c@f801c000 {
 				dmas = <0>, <0>;	/* Do not use DMA for i2c2 */
-				/* pinctrl-0 = <&pinctrl_i2c2_pu>; */
+				pinctrl-0 = <&pinctrl_i2c2_pu>;
 				status = "disabled";
 			};
 
@@ -213,12 +200,38 @@
 			};
 
 			dbgu: serial@ffffee00 {
+				u-boot,dm-pre-reloc;
 				status = "okay";
 			};
 
 			pinctrl@fffff200 {
 				board {
+					u-boot,dm-pre-reloc;
+					pinctrl_i2c0_pu: i2c0_pu {
+						atmel,pins =
+							<AT91_PIOA 30 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
+							<AT91_PIOA 31 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+					};
+
+					pinctrl_i2c2_pu: i2c2_pu {
+						atmel,pins =
+							<AT91_PIOA 18 AT91_PERIPH_B AT91_PINCTRL_PULL_UP>,
+							<AT91_PIOA 19 AT91_PERIPH_B AT91_PINCTRL_PULL_UP>;
+					};
+
+					pinctrl_key_gpio: key_gpio_0 {
+						atmel,pins =
+							<AT91_PIOE 29 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
+					};
+
+					pinctrl_mmc0_cd: mmc0_cd {
+						u-boot,dm-pre-reloc;
+						atmel,pins =
+							<AT91_PIOE 0 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
+					};
+
 					pinctrl_mmc1_cd: mmc1_cd {
+						u-boot,dm-pre-reloc;
 						atmel,pins =
 							<AT91_PIOE 1 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
 					};
@@ -230,92 +243,75 @@
 
                     pinctrl_ble_irq: ble_irq {
                         atmel,pins =
-                            <AT91_PIOD 8 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_DOWN>;
+                        <AT91_PIOD 8 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_DOWN>;
                     };
 				};
 			};
 		};
 
-		usb0: gadget@500000 {
+		nand0: nand@60000000 {
+			nand-bus-width = <8>;
+			nand-ecc-mode = "hw";
+			atmel,has-pmecc;
+			atmel,pmecc-cap = <4>;
+			atmel,pmecc-sector-size = <512>;
+			nand-on-flash-bbt;
+			status = "okay";
+
+			at91bootstrap@0 {
+				label = "at91bootstrap";
+				reg = <0x0 0x40000>;
+			};
+
+			bootloader@40000 {
+				label = "uboot";
+				reg = <0x40000 0xC0000>;
+			};
+
+			bootloaderenv@c0000 {
+				label = "uboot_env";
+				reg = <0x100000 0x80000>;
+			};
+
+			dtb@180000 {
+				label = "device tree";
+				reg = <0x180000 0x80000>;
+			};
+
+			kernel@200000 {
+				label = "kernel";
+				reg = <0x200000 0x600000>;
+			};
+
+			rootfs@800000 {
+				label = "rootfs";
+				reg = <0x800000 0x1f800000>;
+			};
+		};
+
+		usb0: gadget@00500000 {
 			atmel,vbus-gpio = <&pioE 9 GPIO_ACTIVE_HIGH>;	/* PE9, conflicts with A9 */
 			pinctrl-names = "default";
 			pinctrl-0 = <&pinctrl_usba_vbus>;
 			status = "okay";
 		};
 
-		usb1: ohci@600000 {
+		usb1: ohci@00600000 {
 			num-ports = <3>;
 			atmel,vbus-gpio = <0
-					   &pioE 3 GPIO_ACTIVE_HIGH
-					   &pioE 4 GPIO_ACTIVE_HIGH
+					   &pioE 3 GPIO_ACTIVE_LOW
+					   &pioE 4 GPIO_ACTIVE_LOW
 					  >;
 			status = "okay";
 		};
 
-		usb2: ehci@700000 {
+		usb2: ehci@00700000 {
 			status = "okay";
 		};
+	};
 
-		ebi: ebi@10000000 {
-			pinctrl-0 = <&pinctrl_ebi_nand_addr>;
-			pinctrl-names = "default";
-			status = "okay";
-
-			nand_controller: nand-controller {
-				status = "okay";
-
-				nand@3 {
-					reg = <0x3 0x0 0x2>;
-					atmel,rb = <0>;
-					nand-bus-width = <8>;
-					nand-ecc-mode = "hw";
-					nand-ecc-strength = <4>;
-					nand-ecc-step-size = <512>;
-					nand-on-flash-bbt;
-					label = "atmel_nand";
-
-					partitions {
-						compatible = "fixed-partitions";
-						#address-cells = <1>;
-						#size-cells = <1>;
-
-						at91bootstrap@0 {
-							label = "at91bootstrap";
-							reg = <0x0 0x40000>;
-						};
-
-						bootloader@40000 {
-							label = "bootloader";
-							reg = <0x40000 0xc0000>;
-						};
-
-						bootloaderenv@c0000 {
-							label = "bootloader env";
-							reg = <0x100000 0x80000>;
-						};
-
-						dtb@180000 {
-							label = "device tree";
-							reg = <0x180000 0x80000>;
-						};
-
-						kernel@200000 {
-							label = "kernel";
-							reg = <0x200000 0x600000>;
-						};
-
-						rootfs@800000 {
-							label = "rootfs";
-							reg = <0x800000 0x1f800000>;
-						};
-					};
-				};
-			};
-		};
-    };
-
-	gpio_keys {
-		compatible = "gpio-keys";
+    gpio_keys {
+        compatible = "gpio-keys";
 
         key0 {
             label = "KEY0";
@@ -330,10 +326,10 @@
             linux,code = <0x74>;
             gpio-key,wakeup;
         };
-	};
+    };
 
-	leds {
-		compatible = "gpio-leds";
+    leds {
+        compatible = "gpio-leds";
 
         led1 {
             label = "led1";
@@ -358,9 +354,9 @@
             gpios = <&pioE 11 GPIO_ACTIVE_HIGH>;
             linux,default-state = "off";
         };
-	};
+    };
 };
 
 &adc_op_clk {
-    clock-frequency = <500000>;
+clock-frequency = <500000>;
 };
