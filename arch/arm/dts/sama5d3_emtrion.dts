@@ -71,7 +71,6 @@
 			};
 
 			i2c0: i2c@f0014000 {
-				pinctrl-0 = <&pinctrl_i2c0_pu>;
 				status = "disabled";
 			};
 
@@ -184,7 +183,6 @@
 
 			i2c2: i2c@f801c000 {
 				dmas = <0>, <0>;	/* Do not use DMA for i2c2 */
-				pinctrl-0 = <&pinctrl_i2c2_pu>;
 				status = "disabled";
 			};
 
