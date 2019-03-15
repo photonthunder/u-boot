@@ -248,19 +248,9 @@
 				reg = <0x100000 0x80000>;
 			};
 
-			dtb@180000 {
-				label = "device tree";
-				reg = <0x180000 0x80000>;
-			};
-
-			kernel@200000 {
-				label = "kernel";
-				reg = <0x200000 0x600000>;
-			};
-
 			rootfs@800000 {
 				label = "rootfs";
-				reg = <0x800000 0x1f800000>;
+				reg = <0x180000 0x1fe80000>;
 			};
 		};
 
